@@ -2,7 +2,7 @@ from pathlib import Path
 from dataclasses import dataclass
 import json
 
-from .models import TodoItem
+from models import TodoItem
 
 class Todostorage:
     def __init__(self,file:Path)->None:

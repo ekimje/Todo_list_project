@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import font, simpledialog
 
-from .models import TodoItem
+from models import TodoItem
 
 class TodowidgetUI:
     def __init__(self, root:tk.Tk, on_add, on_toggle, on_close)->None:
@@ -64,15 +64,15 @@ class TodowidgetUI:
 
         self.add_button = tk.Button(
             self.bottom_bar,
-            text = "+"
+            text = "+",
             command = self._submit_new_todo,
             bg="#272727",
             fg="#f0f0f0",
             bd=0,
             padx=10,
-            pady=6
+            pady=6,
             activebackground="#3a3a3a",
-            activebackground="#ffffff",
+            activeforeground="#ffffff",
         )
         self.add_button.pack(fill="x")
         
