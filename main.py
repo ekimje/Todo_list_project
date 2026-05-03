@@ -9,6 +9,7 @@ class TodoWidgetApp:
         self.root = root
         self.storage = Todostorage(data_file)
         self.items:list[TodoItem] = self.storage.load()
+        self.keep_window_bottom()
         
         self.ui=TodowidgetUI(
             root = root,
@@ -31,6 +32,10 @@ class TodoWidgetApp:
     def on_close(self)->None:
         self.storage.save(self.items)
         self.root.destroy()
+        
+    def keep_window_bottom(self):
+        self.root.lower()
+        self.root.after(500,self.keep_window_bottom)
    
 def main()->None:
     root = tk.Tk()
