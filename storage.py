@@ -18,8 +18,6 @@ class Todostorage:
         
         except (json.JSONDecodeError, TypeError, ValueError):
             return []
-        finally:
-            self.root.destroy()
     
     def save(self, items: list[TodoItem])->None:
         print("start")

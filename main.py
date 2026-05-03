@@ -34,8 +34,9 @@ class TodoWidgetApp:
         self.root.destroy()
         
     def keep_window_bottom(self):
-        self.root.lower()
-        self.root.after(500,self.keep_window_bottom)
+        #최상위 창 속성 해제. 다른 창 뒤에 있도록 설정
+        self.root.attributes("-topmost", False)
+        self.root.after(0,self.root.lower) #창을 가장 뒤로 보내기
    
 def main()->None:
     root = tk.Tk()
@@ -46,4 +47,4 @@ def main()->None:
     root.mainloop()
     
 if __name__ == "__main__":
-    main()   
+    main()  
