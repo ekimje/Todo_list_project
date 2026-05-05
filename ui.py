@@ -99,7 +99,13 @@ class TodowidgetUI:
         if not trimmed:
             return
         
-        self.on_add(text)
+        self.on_add(trimmed)
+        
+    def render(grouped_items):
+        for date, items in grouped_items.items():
+            print(date)
+            for item in items:
+                print("-",item.text)
         
     def render_items(self, items:list[TodoItem])->None:
         for widget in self.list_frame.winfo_children():

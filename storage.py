@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import datetime
 
 from dataclasses import asdict
 from models import TodoItem
@@ -14,13 +15,26 @@ class Todostorage:
 
         try:
             raw_data = json.loads(self.file.read_text(encoding="utf-8"))
-            return [TodoItem(**item) for item in raw_data]
+            return [
+                TodoItem(
+                    text=item["text"],
+                    done=item["done"],
+                    date=datetime.fromisoformat(item["date"])
+                    )
+                for item in raw_data
+                ]
         
         except (json.JSONDecodeError, TypeError, ValueError):
             return []
     
     def save(self, items: list[TodoItem])->None:
-        print("start")
-        payload=[asdict(item) for item in items]  
-        self.file.write_text(json.dumps(payload,indent=2),encoding="utf-8",) 
-        print("end")
+        payload=[]
+        for item in items:
+            d = asdict(item)
+            d["date"] = item.date.isoformat()
+            payload.append(d)
+            
+        self.file.write_text(
+            json.dumps(payload,indent=2,ensure_ascii=False),
+            encoding="utf-8"
+        )

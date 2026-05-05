@@ -2,6 +2,7 @@ from pathlib import Path
 from storage import Todostorage
 from models import TodoItem
 from ui import TodowidgetUI
+from logic import sort_items, group_by_date
 import tkinter as tk
 
 class TodoWidgetApp:
@@ -16,18 +17,23 @@ class TodoWidgetApp:
             on_add = self.add_item,
             on_toggle = self.toggle_item,
             on_close = self.on_close,
-        )
-        self.ui.render_items(self.items)
+        )  
+        self.refresh_ui()  
         
     def add_item(self, text:str)->None:
         self.items.append(TodoItem(text=text,done=False))
         self.storage.save(self.items)
-        self.ui.render_items(self.items)
+        self.refresh_ui()
+        
+    def refresh_ui(self):
+        sorted_items = sort_items(self.items)
+        group_items = group_by_date(sorted_items)
+        self.ui.render_items(group_items)
     
-    def toggle_item(self,index:int)->None:
-        self.items[index].done = not self.items[index].done
+    def toggle_item(self,items : TodoItem)->None:
+        self.items.done = not self.items.done
         self.storage.save(self.items)
-        self.ui.render_items(self.items)
+        self.refresh_ui()
         
     def on_close(self)->None:
         self.storage.save(self.items)
