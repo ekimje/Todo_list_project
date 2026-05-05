@@ -1,12 +1,16 @@
-from pathlib import Path
-from storage import Todostorage
-from models import TodoItem
-from ui import TodowidgetUI
-from logic import sort_items, group_by_date
+from __future__ import annotations
+
 import tkinter as tk
+from pathlib import Path
+from logic import sort_items, group_by_date
+from models import TodoItem
+from storage import Todostorage
+from ui import TodowidgetUI
+
+
 
 class TodoWidgetApp:
-    def __init__(self, root:tk.Tk, data_file:Path)->None:
+    def __init__(self, root:tk.Tk, data_file:Path) -> None:
         self.root = root
         self.storage = Todostorage(data_file)
         self.items:list[TodoItem] = self.storage.load()
@@ -25,13 +29,13 @@ class TodoWidgetApp:
         self.storage.save(self.items)
         self.refresh_ui()
         
-    def refresh_ui(self):
+    def refresh_ui(self) -> None:
         sorted_items = sort_items(self.items)
-        group_items = group_by_date(sorted_items)
-        self.ui.render_items(group_items)
+        grouped_items = group_by_date(sorted_items)
+        self.ui.render_items(grouped_items)
     
-    def toggle_item(self,items : TodoItem)->None:
-        self.items.done = not self.items.done
+    def toggle_item(self, item:TodoItem)->None:
+        item.done = not item.done
         self.storage.save(self.items)
         self.refresh_ui()
         
@@ -39,7 +43,7 @@ class TodoWidgetApp:
         self.storage.save(self.items)
         self.root.destroy()
         
-    def keep_window_bottom(self):
+    def keep_window_bottom(self) -> None:
         #최상위 창 속성 해제. 다른 창 뒤에 있도록 설정
         self.root.attributes("-topmost", False)
         self.root.after(0,self.root.lower) #창을 가장 뒤로 보내기
