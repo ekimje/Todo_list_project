@@ -7,6 +7,8 @@ from typing import Iterable
 from models import TodoItem
 
 def sort_item(items: Iterable[TodoItem]) -> list[TodoItem]:
+    if items is None:
+        return []
     return sorted(items, key=lambda item: item.created_at, reverse=True)
 
 def filter_item_by_date(items:Iterable[TodoItem], target_date: date) -> dict[date,list[TodoItem]]:

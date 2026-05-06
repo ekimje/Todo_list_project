@@ -50,7 +50,7 @@ class TodoWidgetApp:
         self.refresh_ui()
         
     def move_next_day(self) -> None:
-        self.cuttent_date += timedelta(days=1)
+        self.current_date += timedelta(days=1)
         self.refresh_ui()
         
     def on_close(self)->None:

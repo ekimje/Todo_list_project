@@ -28,7 +28,7 @@ class Todostorage:
                         created_at=datetime.fromisoformat(item["created_at"],)
                     )
                 )
-                return items
+            return items
         except (json.JSONDecodeError, TypeError, ValueError,KeyError):
             return []
     
