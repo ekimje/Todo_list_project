@@ -25,6 +25,8 @@ class TodoWidgetApp:
             on_add = self.add_item,
             on_toggle = self.toggle_item,
             on_close = self.on_close,
+            on_edit= self.edit_item,
+            on_delete=self.delete_item,
             on_prev_day=self.on_prev_day,
             on_next_day=self.on_next_day,
         )  
@@ -46,6 +48,16 @@ class TodoWidgetApp:
         self.storage.save(self.items)
         self.refresh_ui()
     
+    def edit_item(self, item:TodoItem, text:str) -> None:
+        item.text = text
+        self.storage.save(self.items)
+        self.refresh_ui()
+    
+    def delete_item(self, item:TodoItem) -> None:
+        if item in self.items:
+            self.items.remove(item)
+        self.storage.save(self.items)
+        self.refresh_ui()
         
     def move_prev_day(self) -> None:
         self.current_date -= timedelta(days=1)

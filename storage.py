@@ -25,7 +25,7 @@ class Todostorage:
                     TodoItem(
                         text=item["text"],
                         done=bool(item.get("done",False)),
-                        created_at=datetime.fromisoformat(item["created_at"],)
+                        created_at=datetime.fromisoformat(item["created_at"]),
                     )
                 )
             return items
