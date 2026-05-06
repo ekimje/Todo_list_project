@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import tkinter as tk
 from pathlib import Path
-from datetime import date, timedelta
-from logic import filter_item_by_date,sort_item
+from datetime import date, datetime, timedelta
+from logic import filter_items_by_date,sort_items
 from models import TodoItem
 from storage import Todostorage
 from ui import TodowidgetUI
@@ -31,19 +31,21 @@ class TodoWidgetApp:
         self.refresh_ui()  
         
     def add_item(self, text:str)->None:
-        self.items.append(TodoItem(text=text))
+        created_at = datetime.combine(self.current_date, datetime.now().time())
+        self.items.append(TodoItem(text=text, created_at=created_at))
         self.storage.save(self.items)
         self.refresh_ui()
         
     def refresh_ui(self) -> None:
-        sorted_items = sort_item(self.items)
-        filtered_items = filter_item_by_date(sorted_items,self.current_date)
+        sorted_items = sort_items(self.items)
+        filtered_items = filter_items_by_date(sorted_items,self.current_date)
         self.ui.render_items(self.current_date, filtered_items)
     
     def toggle_item(self, item:TodoItem)->None:
         item.done = not item.done
         self.storage.save(self.items)
         self.refresh_ui()
+    
         
     def move_prev_day(self) -> None:
         self.current_date -= timedelta(days=1)

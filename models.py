@@ -8,4 +8,4 @@ from dataclasses import dataclass,field
 class TodoItem:
     text: str
     done: bool = False
-    created_at : datetime = field(default_factory=datetime.now())
+    created_at : datetime = field(default_factory=datetime.now)
