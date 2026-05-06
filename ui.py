@@ -79,7 +79,14 @@ class TodowidgetUI:
         self.date_nav = tk.Frame(self.container, bg = "#141414")
         self.date_nav.pack(fill="x",padx=10,pady=(8,2))
     
-        self.prev_button=tk.Button(self.date_nav, text="<", command=self.on_prev_day,width=3)
+        self.prev_button=tk.Button(
+            self.date_nav,
+            text="<",
+            command=self.on_prev_day,
+            width=3,
+            bg="#272727",
+            fg="#f0f0f0",
+            )
         self.prev_button.pack(side="left")
         
         self.date_label = tk.Label(
@@ -91,7 +98,14 @@ class TodowidgetUI:
         )
         self.date_label.pack(side="left",fill="x",expand=True)
         
-        self.next_button = tk.Button(self.date_nav, text=">",command=self.on_next_day, width=3)
+        self.next_button = tk.Button(
+            self.date_nav,
+            text=">",
+            command=self.on_next_day,
+            width=3,
+            bg="#272727",
+            fg="#f0f0f0",
+        )
         self.next_button.pack(side="right")
     
         self.list_frame = tk.Frame(self.container, bg="#141414")
@@ -153,7 +167,7 @@ class TodowidgetUI:
     
     def _submit_delete_todo(self, item:TodoItem) -> None:
         if not messagebox.askyesno(
-            "선택한 일정을 삭제하시겠습니까?",
+            "일정 삭제","선택한 일정을 삭제하시겠습니까?",
             parent=self.root
         ):
             return
