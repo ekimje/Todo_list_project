@@ -6,12 +6,15 @@ from typing import Iterable
 
 from models import TodoItem
 
-def sort_items(items: Iterable[TodoItem]) -> list[TodoItem]:
-    return sorted(items, key=lambda item:item.created_at, reverse=True)
+def sort_item(items: Iterable[TodoItem]) -> list[TodoItem]:
+    return sorted(items, key=lambda item: item.created_at, reverse=True)
+
+def filter_item_by_date(items:Iterable[TodoItem], target_date: date) -> dict[date,list[TodoItem]]:
+    return [item for item in items if item.created_at.date() == target_date]
 
 
-def group_by_date(items:Iterable[TodoItem]) -> dict[date,list[TodoItem]]:
-    grouped  : dict[items:Iterable[TodoItem]] = defaultdict(list)
+def group_by_date(items: Iterable[TodoItem]) -> dict[date, list[TodoItem]]:
+    grouped: dict[date, list[TodoItem]] = defaultdict(list)
     for item in items:
         grouped[item.create_at.date()].append(item)
     return dict(grouped)

@@ -7,15 +7,19 @@ from typing import Callable
 from models import TodoItem
 
 class TodowidgetUI:
-    def __init__(self, root:tk.Tk, on_add:Callable[[str],None], on_toggle:Callable[[TodoItem],None], on_close:Callable[[],None])->None:
+    def __init__(self, root:tk.Tk, on_add:Callable[[str],None], on_toggle:Callable[[TodoItem],None], on_close:Callable[[],None], on_prev_day:Callable[[],None],on_next_day:Callable[[],None])->None:
         self.root = root
         self.on_add = on_add
         self.on_toggle = on_toggle
         self.on_close = on_close
         
+        self.on_prev_day = on_prev_day
+        self.on_next_day = on_next_day
+        
         self._drag_start_x = 0
         self._drag_start_y=0
         self.item_vars:list[tk.BooleanVar] = []
+        self.date_text_var = tk.StringVar(value="")
         
         self._build_layout()
         self._build_drag_events()
@@ -59,12 +63,30 @@ class TodowidgetUI:
         )
         self.close_button.pack(side="right")
         
+        self.date_nav = tk.Frame(self.container, bg = "#141414")
+        self.date_nav.pack(fill="x",padx=10,pady=(8,2))
+    
+        self.prev_button=tk.Button(self.date_nav, text="<", command=self.on_prev_day,width=3)
+        self.prev_button.pack(side="left")
+        
+        self.date_label = tk.Label(
+            self.date_nav,
+            textvariable=self.date_text_var,
+            bg="#141414",
+            fg="#e5e5e5",
+            font=("Arial",10,"bold"),
+        )
+        self.date_label.pack(side="left",fill="x",expand=True)
+        
+        self.next_button = tk.Button(self.date_nav, text=">",command=self.on_next_day, width=3)
+        self.next_button.pack(side="right")
+    
         self.list_frame = tk.Frame(self.container, bg="#141414")
-        self.list_frame.pack(fill="both",expand=True,padx=10,pady=(8,6))
+        self.list_frame.pack(fill="both",expand=True,padx=10,pady=(6,6))
         
         self.bottom_bar=tk.Frame(self.container,bg="#141414")
         self.bottom_bar.pack(fill="x",padx=10,pady=(0,0))
-
+        
         self.add_button = tk.Button(
             self.bottom_bar,
             text = "+",
@@ -88,7 +110,7 @@ class TodowidgetUI:
         self._drag_start_x = event.x
         self._drag_start_y = event.y
     
-    def _do_drag(self,event)->None:
+    def _do_drag(self,event:tk.Event)->None:
         x_pos = self.root.winfo_x() +(event.x - self._drag_start_x)
         y_pos = self.root.winfo_y() +(event.y - self._drag_start_y)
         self.root.geometry(f"+{x_pos}+{y_pos}")
@@ -102,52 +124,47 @@ class TodowidgetUI:
             return
         self.on_add(trimmed)
         
-    def render_items(self, grouped_items:dict[date,list[TodoItem]])->None:
+    def render_items(self,current_date:date, items:list[TodoItem])->None:
+        self.date_text_var.set(current_date.isoformat())
         for widget in self.list_frame.winfo_children():
             widget.destroy()
             
-        self.item_vars=[]
-        
-        for item_date, date_items in grouped_items.items():
-            date_label = tk.Label(
-                self.list_frame,
-                text=item_date.isoformat(),
-                bg="#141414",
-                fg="#9a9a9a",
-                anchor="w",
-                font=("Arial",9,"bold"),
-            )
-            date_label.pack(fill="x",pady=(8,2))
+        if not items:
+            empty = tk.Label(self.list_frame, text="해당 날짜의 일정이 없습니다.", bg="#141414", fg="#888888")
+            empty.pack(fill="x", pady=8)
+            return
             
-            for item in date_items:
-                row = tk.Frame(self.list_frame, bg="#141414")
-                row.pack(fill="x", pady=2)
+        self.item_vars=[]  
+            
+        for item in items:
+            row = tk.Frame(self.list_frame, bg="#141414")
+            row.pack(fill="x", pady=2)
 
-                var = tk.BooleanVar(value=item.done)
-                self.item_vars.append(var)
+            var = tk.BooleanVar(value=item.done)
+            self.item_vars.append(var)
 
-                checkbox = tk.Checkbutton(
-                    row,
-                    variable=var,
-                    command=lambda item=item: self.on_toggle(item),
-                    bg="#141414",
-                    fg="#aeaeae",
-                    selectcolor="#222222",
-                    activebackground="#141414",
-                )
-                checkbox.pack(side="left")
+            checkbox = tk.Checkbutton(
+                row,
+                variable=var,
+                command=lambda item=item: self.on_toggle(item),
+                bg="#141414",
+                fg="#aeaeae",
+                selectcolor="#222222",
+                activebackground="#141414",
+            )
+            checkbox.pack(side="left")
 
-                style = font.Font(family="Arial", size=10)
-                fg_color = "#6f6f6f" if item.done else "#f0f0f0"
-                if item.done:
-                    style.configure(overstrike=1)
+            style = font.Font(family="Arial", size=10)
+            fg_color = "#6f6f6f" if item.done else "#f0f0f0"
+            if item.done:
+                style.configure(overstrike=1)
 
-                label = tk.Label(
+            label = tk.Label(
                     row,
                     text=item.text,
                     bg="#141414",
                     fg=fg_color,
                     font=style,
                     anchor="w",
-                )
-                label.pack(side="left", fill="x", expand=True)
+            )
+            label.pack(side="left", fill="x", expand=True)

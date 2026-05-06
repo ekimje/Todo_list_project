@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import tkinter as tk
 from pathlib import Path
-from logic import sort_items, group_by_date
+from datetime import date, timedelta
+from logic import filter_item_by_date,sort_item
 from models import TodoItem
 from storage import Todostorage
 from ui import TodowidgetUI
@@ -14,6 +15,9 @@ class TodoWidgetApp:
         self.root = root
         self.storage = Todostorage(data_file)
         self.items:list[TodoItem] = self.storage.load()
+        self.current_date = date.today()
+        self.on_prev_day = self.move_prev_day
+        self.on_next_day = self.move_next_day
         self.keep_window_bottom()
         
         self.ui=TodowidgetUI(
@@ -21,22 +25,32 @@ class TodoWidgetApp:
             on_add = self.add_item,
             on_toggle = self.toggle_item,
             on_close = self.on_close,
+            on_prev_day=self.on_prev_day,
+            on_next_day=self.on_next_day,
         )  
         self.refresh_ui()  
         
     def add_item(self, text:str)->None:
-        self.items.append(TodoItem(text=text,done=False))
+        self.items.append(TodoItem(text=text))
         self.storage.save(self.items)
         self.refresh_ui()
         
     def refresh_ui(self) -> None:
-        sorted_items = sort_items(self.items)
-        grouped_items = group_by_date(sorted_items)
-        self.ui.render_items(grouped_items)
+        sorted_items = sort_item(self.items)
+        filtered_items = filter_item_by_date(sorted_items,self.current_date)
+        self.ui.render_items(self.current_date, filtered_items)
     
     def toggle_item(self, item:TodoItem)->None:
         item.done = not item.done
         self.storage.save(self.items)
+        self.refresh_ui()
+        
+    def move_prev_day(self) -> None:
+        self.current_date -= timedelta(days=1)
+        self.refresh_ui()
+        
+    def move_next_day(self) -> None:
+        self.cuttent_date += timedelta(days=1)
         self.refresh_ui()
         
     def on_close(self)->None:
